@@ -1,6 +1,8 @@
 using CityInfo.API;
+using CityInfo.API.DbContexts;
 using CityInfo.API.Services;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.EntityFrameworkCore;
 using Serilog;
 
 Log.Logger = new LoggerConfiguration()
@@ -13,6 +15,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Host.UseSerilog();
+
+builder.Services.AddDbContext<CityInfoContext>(options =>
+    options.UseSqlite("CityInfo.db"));
 
 builder.Services.AddControllers(options =>
 {

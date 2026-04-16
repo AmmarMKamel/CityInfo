@@ -2,8 +2,14 @@
 {
     public class LocalMailService : IMailService
     {
-        private readonly string _mailFrom = "noreply@mycompany.com";
-        private readonly string _mailTo = "admin@mycompany.com";
+        private readonly string _mailFrom;
+        private readonly string _mailTo;
+
+        public LocalMailService(IConfiguration configuration)
+        {
+            _mailFrom = configuration["mailSettings:mailFromAddress"]!;
+            _mailTo = configuration["mailSettings:mailToAddress"]!;
+        }
 
         public void SendEmail(string subject, string message)
         {

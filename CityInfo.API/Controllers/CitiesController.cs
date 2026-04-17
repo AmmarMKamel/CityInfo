@@ -1,4 +1,5 @@
 ﻿using CityInfo.API.Models;
+using CityInfo.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CityInfo.API.Controllers
@@ -7,29 +8,39 @@ namespace CityInfo.API.Controllers
     [Route("api/cities")]
     public class CitiesController : ControllerBase
     {
-        private readonly CitiesDataStore _citiesDataStore;
+        private readonly ICityInfoRepository _cityInfoRepository;
 
-        public CitiesController(CitiesDataStore citiesDataStore)
+        public CitiesController(ICityInfoRepository cityInfoRepository)
         {
-            _citiesDataStore = citiesDataStore ?? throw new ArgumentNullException(nameof(citiesDataStore));
+            _cityInfoRepository = cityInfoRepository ??
+                throw new ArgumentNullException(nameof(cityInfoRepository));
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CityDto>> GetCities()
+        public async Task<ActionResult<IEnumerable<CityWithoutPointsOfInterestDto>>> GetCities()
         {
-            return Ok(_citiesDataStore.Cities);
-        }
+            var cities = await _cityInfoRepository.GetCitiesAsync();
 
-        [HttpGet("{id}")]
-        public ActionResult<CityDto> GetCity(int id)
-        {
-            var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == id);
-            if (city == null)
+            var results = cities.Select(c => new CityWithoutPointsOfInterestDto
             {
-                return NotFound();
-            }
+                Id = c.Id,
+                Name = c.Name,
+                Description = c.Description
+            }).ToList();
 
-            return Ok(city);
+            return Ok(results);
         }
+
+        //[HttpGet("{id}")]
+        //public ActionResult<CityDto> GetCity(int id)
+        //{
+        //    var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == id);
+        //    if (city == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return Ok(city);
+        //}
     }
 }

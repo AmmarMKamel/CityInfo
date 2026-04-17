@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Host.UseSerilog();
 
 builder.Services.AddDbContext<CityInfoContext>(options =>
-    options.UseSqlite("Data Source=CityInfo.db"));
+    options.UseSqlite(builder.Configuration.GetConnectionString("CityInfoDBConnectionString")));
 
 builder.Services.AddControllers(options =>
 {

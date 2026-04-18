@@ -18,6 +18,34 @@ namespace CityInfo.API.Services
             return await _context.Cities.OrderBy(c => c.Name).ToListAsync();
         }
 
+        public async Task<IEnumerable<City>> GetCitiesAsync(string? name, string? searchQuery)
+        {
+            if (string.IsNullOrWhiteSpace(name) &&
+                string.IsNullOrWhiteSpace(searchQuery))
+            {
+                return await GetCitiesAsync();
+            }
+
+            IQueryable<City> collection = _context.Cities;
+
+            if (!string.IsNullOrWhiteSpace(name))
+            {
+                name = name.Trim();
+                collection = collection.Where(c => c.Name == name);
+            }
+
+            if (!string.IsNullOrWhiteSpace(searchQuery))
+            {
+                searchQuery = searchQuery.Trim();
+                collection = collection.Where(c => c.Name.Contains(searchQuery) ||
+                    (c.Description != null && c.Description.Contains(searchQuery)));
+            }
+
+            return await collection
+                .OrderBy(c => c.Name)
+                .ToListAsync();
+        }
+
         public async Task<City?> GetCityAsync(int cityId, bool includePointsOfInterest)
         {
             if (includePointsOfInterest)

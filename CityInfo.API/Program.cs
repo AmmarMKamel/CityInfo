@@ -19,7 +19,10 @@ builder.Host.UseSerilog();
 builder.Services.AddDbContext<CityInfoContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CityInfoDBConnectionString")));
 
-builder.Services.AddAutoMapper(cfg => { }, AppDomain.CurrentDomain.GetAssemblies());
+builder.Services.AddAutoMapper(cfg =>
+{
+    cfg.AddMaps(AppDomain.CurrentDomain.GetAssemblies());
+});
 
 builder.Services.AddControllers(options =>
 {

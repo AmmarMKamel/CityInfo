@@ -2,6 +2,7 @@
 using CityInfo.API.Models;
 using CityInfo.API.Services;
 using Microsoft.AspNetCore.Mvc;
+using SQLitePCL;
 
 namespace CityInfo.API.Controllers
 {
@@ -28,16 +29,21 @@ namespace CityInfo.API.Controllers
             return Ok(_mapper.Map<IEnumerable<CityWithoutPointsOfInterestDto>>(cities));
         }
 
-        //[HttpGet("{id}")]
-        //public ActionResult<CityDto> GetCity(int id)
-        //{
-        //    var city = _citiesDataStore.Cities.FirstOrDefault(c => c.Id == id);
-        //    if (city == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetCity(int id, bool includePointsOfInterest = false)
+        {
+            var city = await _cityInfoRepository.GetCityAsync(id, includePointsOfInterest);
+            if (city == null)
+            {
+                return NotFound();
+            }
 
-        //    return Ok(city);
-        //}
+            if (includePointsOfInterest)
+            {
+                return Ok(_mapper.Map<CityDto>(city));
+            }
+
+            return Ok(_mapper.Map<CityWithoutPointsOfInterestDto>(city));
+        }
     }
 }

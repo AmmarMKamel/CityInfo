@@ -40,6 +40,15 @@ builder.Services.AddAuthentication("Bearer")
         };
     });
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("MustBeFromMakkah", policy =>
+    {
+        policy.RequireAuthenticatedUser();
+        policy.RequireClaim("city", "Makkah");
+    });
+});
+
 builder.Services.AddControllers(options =>
 {
     options.ReturnHttpNotAcceptable = true;

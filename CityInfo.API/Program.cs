@@ -25,6 +25,13 @@ builder.Services.AddAutoMapper(cfg =>
     cfg.AddMaps(AppDomain.CurrentDomain.GetAssemblies());
 });
 
+builder.Services.AddApiVersioning(options =>
+{
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.DefaultApiVersion = new(1, 0);
+    options.ReportApiVersions = true;
+}).AddMvc();
+
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer(options =>
     {

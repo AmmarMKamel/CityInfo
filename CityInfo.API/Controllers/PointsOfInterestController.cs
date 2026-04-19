@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Asp.Versioning;
+using AutoMapper;
 using CityInfo.API.DbContexts;
 using CityInfo.API.Entities;
 using CityInfo.API.Models;
@@ -13,6 +14,7 @@ namespace CityInfo.API.Controllers
 {
     [Route("api/cities/{cityId}/pointsofinterest")]
     [Authorize(Policy = "MustBeFromMakkah")]
+    [ApiVersion(2)]
     [ApiController]
     public class PointsOfInterestController : ControllerBase
     {

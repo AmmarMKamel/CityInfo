@@ -12,7 +12,7 @@ using System.Threading.Tasks;
 
 namespace CityInfo.API.Controllers
 {
-    [Route("api/cities/{cityId}/pointsofinterest")]
+    [Route("api/{version:apiVersion}/cities/{cityId}/pointsofinterest")]
     [Authorize(Policy = "MustBeFromMakkah")]
     [ApiVersion(2)]
     [ApiController]

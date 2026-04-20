@@ -13,7 +13,7 @@ namespace CityInfo.API.Controllers
     [Authorize]
     [ApiVersion(1)]
     [ApiVersion(2)]
-    [Route("api/cities")]
+    [Route("api/v{version:apiVersion}/cities")]
     public class CitiesController : ControllerBase
     {
         private readonly ICityInfoRepository _cityInfoRepository;

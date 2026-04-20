@@ -6,7 +6,7 @@ using System.Security.Claims;
 
 namespace CityInfo.API.Controllers
 {
-    [Route("api/auth")]
+    [Route("api/v{version:apiVersion}/auth")]
     [ApiController]
     public class AuthenticationController : ControllerBase
     {

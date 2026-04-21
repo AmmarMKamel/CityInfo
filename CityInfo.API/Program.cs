@@ -2,7 +2,9 @@ using Asp.Versioning.ApiExplorer;
 using CityInfo.API;
 using CityInfo.API.DbContexts;
 using CityInfo.API.Services;
+using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.ApiExplorer;
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.AspNetCore.StaticFiles;
@@ -15,13 +17,31 @@ using System;
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Debug()
     .WriteTo.Console()
-    .WriteTo.File("logs/cityinfo.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Host.UseSerilog();
+var environment = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+
+if (environment == Environments.Development)
+{
+    builder.Host.UseSerilog();
+}
+else
+{
+    builder.Host.UseSerilog((context, loggerConfiguration) =>
+    {
+        loggerConfiguration
+            .MinimumLevel.Debug()
+            .WriteTo.Console()
+            .WriteTo.File("logs/cityinfo.txt", rollingInterval: RollingInterval.Day)
+            .WriteTo.ApplicationInsights(new TelemetryConfiguration
+            {
+                ConnectionString = builder.Configuration["ApplicationInsights:ConnectionString"]
+            }, TelemetryConverter.Traces);
+    });
+}
 
 builder.Services.AddDbContext<CityInfoContext>(options =>
     options.UseSqlite(builder.Configuration.GetConnectionString("CityInfoDBConnectionString")));

@@ -1,4 +1,7 @@
 using Asp.Versioning.ApiExplorer;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Identity;
+using Azure.Security.KeyVault.Secrets;
 using CityInfo.API;
 using CityInfo.API.DbContexts;
 using CityInfo.API.Services;
@@ -30,6 +33,11 @@ if (environment == Environments.Development)
 }
 else
 {
+    var secretClient = new SecretClient(
+        new Uri(""),
+        new DefaultAzureCredential());
+    builder.Configuration.AddAzureKeyVault(secretClient, new KeyVaultSecretManager());
+
     builder.Host.UseSerilog((context, loggerConfiguration) =>
     {
         loggerConfiguration
